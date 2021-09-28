@@ -1,0 +1,34 @@
+DELIMITER $$
+CREATE OR REPLACE FUNCTION getJamIzin(id VARCHAR(15), tgl VARCHAR(20), tahun INT, bulan INT) RETURNS VARCHAR(20)
+BEGIN
+  	DECLARE jam VARCHAR(20) DEFAULT '';
+
+		SELECT (IF(EXISTS(
+                            SELECT 'Y' as hasil
+                            FROM transaksi_surat_ijin
+                            WHERE transaksi_surat_ijin.id_karyawan = a.id_karyawan AND transaksi_surat_ijin.tanggal_ijin = a.tanggal_jadwal AND transaksi_surat_ijin.status_ijin = 'Y'
+                            ),
+                            (SELECT transaksi_surat_ijin.jam_datang_keluar_ijin
+                            FROM transaksi_surat_ijin
+                            WHERE transaksi_surat_ijin.id_karyawan = a.id_karyawan AND transaksi_surat_ijin.tanggal_ijin = a.tanggal_jadwal AND transaksi_surat_ijin.status_ijin = 'Y'), 'N')) into jam
+    FROM master_jd_kerja_kyw as a,
+         master_karyawan as b,
+         master_jam_kerja c,
+         master_divisi d
+    WHERE a.status = 'Y' AND
+          b.id_karyawan = a.id_karyawan AND
+          c.id_jam_kerja = a.id_jam_kerja AND
+          d.id_divisi = b.id_divisi AND
+          IF(id = '0', a.id_karyawan = a.id_karyawan, a.id_karyawan = id) AND
+          IF('0' = '0', d.id_divisi = d.id_divisi, d.id_divisi = '10') AND
+          a.tanggal_jadwal = STR_TO_DATE(tgl, '%Y-%m-%d') AND
+          IF(b.k_tk = 'Kontrak', 
+             IF(bulan = '1', 
+                a.tanggal_jadwal BETWEEN STR_TO_DATE(CONCAT(tahun-1, '-', '12', '-18'), '%Y-%m-%d') AND STR_TO_DATE(CONCAT(tahun, '-', bulan, '-17'), '%Y-%m-%d'),
+                a.tanggal_jadwal BETWEEN STR_TO_DATE(CONCAT(tahun, '-', bulan-1, '-18'), '%Y-%m-%d') AND STR_TO_DATE(CONCAT(tahun, '-', bulan, '-17'), '%Y-%m-%d')),
+             IF(bulan = '1', 
+                a.tanggal_jadwal BETWEEN STR_TO_DATE(CONCAT(tahun-1, '-', '12', '-26'), '%Y-%m-%d') AND STR_TO_DATE(CONCAT(tahun, '-', bulan, '-25'), '%Y-%m-%d'),
+                a.tanggal_jadwal BETWEEN STR_TO_DATE(CONCAT(tahun, '-', bulan-1, '-26'), '%Y-%m-%d') AND STR_TO_DATE(CONCAT(tahun, '-', bulan, '-25'), '%Y-%m-%d')));
+  	RETURN jam;
+END$$
+DELIMITER ;

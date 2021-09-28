@@ -1,0 +1,414 @@
+
+<?php
+
+
+$view_id = '';
+$nama_karyawan = '';
+$nama_divisi = '';
+$nama_jabatan = '';
+$tanggal = '';
+$jam_mulai = '';
+$jam_akhir = '';
+$uraian_kerja = '';
+$tanggal_buat = '';
+foreach($lembur as $s)
+{
+    if($s['id_lembur'] == $id)
+    {
+        $view_id = $s['view_id'];
+        $nama_karyawan = $s['nama_karyawan'];
+        $nama_divisi = $s['nama_divisi'];
+        $nama_jabatan = $s['nama_jabatan'];
+        $tanggal = $s['tanggal_lembur'];
+        $jam_mulai = $s['jam_mulai'];
+        $jam_akhir = $s['jam_akhir'];
+        $uraian_kerja = $s['uraian_kerja'];
+        $tanggal_buat = $s['change_at'];
+    }
+}
+
+//ambil 2 nama awal
+$nama = $nama_karyawan;
+$check1 = strpos($nama, " ");
+if($check1 == "")
+{
+	$nama = $nama;
+}
+else
+{
+	$nama1 = substr($nama, 0, $check1+1);
+	$nama2 = substr($nama, $check1+1);
+    //echo "nama 1 : ".$nama1."<br>";
+    //echo "nama 2 : ".$nama2."<br>";
+    $check2 = strpos($nama2, " ");
+    //echo "check 2 : ".$check2."<br>";
+    if($check2 == "")
+    {
+    	$nama = $nama;
+    }
+    else
+    {
+        $nama2 = substr($nama2, 0, $check2);
+        //echo "nama 1 : ".$nama1."<br>";
+        //echo "nama 2 : ".$nama2."<br>";
+        $nama = $nama1.$nama2;
+    }
+}
+//echo "<br>";
+//echo "nama Fix : ".$nama."<br>";
+$nama_karyawan = $nama;
+
+
+$jam_mulai = substr($jam_mulai, 0, 5);
+$jam_akhir = substr($jam_akhir, 0, 5);
+
+$tanggal_buat = substr($tanggal_buat,8, 2)."-".substr($tanggal_buat,5, 2)."-".substr($tanggal_buat,0, 4);
+// $tanggal_mulai = substr($tanggal_mulai,8, 2)."-".substr($tanggal_mulai,5, 2)."-".substr($tanggal_mulai,0, 4);
+// $tanggal_akhir = substr($tanggal_akhir,8, 2)."-".substr($tanggal_akhir,5, 2)."-".substr($tanggal_akhir,0, 4);
+
+
+// $timestamp = strtotime('2020-12-28');
+$timestamp = strtotime($tanggal);
+
+$hari = date('D', $timestamp);
+
+if($hari == 'Sun')
+    $hari = 'Minggu';
+else if($hari == 'Sat')
+    $hari = 'Sabtu';
+else if($hari == 'Fri')
+    $hari = 'Jumat';
+else if($hari == 'Thu')
+    $hari = 'Kamis';
+else if($hari == 'Wed')
+    $hari = 'Rabu';
+else if($hari == 'Tue')
+    $hari = 'Selasa';
+else if($hari == 'Mon')
+    $hari = 'Senin';
+
+$tanggal = substr($tanggal,8, 2)."-".substr($tanggal,5, 2)."-".substr($tanggal,0, 4);
+
+$uraian_kerja = substr($uraian_kerja, 0, 20);
+/*
+$jam_datang_keluar_ijin = substr($jam_datang_keluar_ijin ,0 , 5);
+*/
+?>
+
+<!doctype html>
+<html><head>
+    <title>Surat Perintah Lembur <?php echo $view_id; ?></title>
+  </head><body>
+    <div class="container">
+        <p class="p1"><b>PT. JAYAMAS MEDICA INDUSTRI</b></p>
+        <p class="p2">Jl. Raya By Pass KM 28, Krian - Sidoarjo</p>
+        <center>
+            <p class="p3"><b>SURAT PERNTAH LEMBUR</b></p>
+        </center>
+
+        <!-- <p class="p4">Krian, <?php //echo $tanggal_cuti; ?></p> -->
+
+        
+        <table style="width:100%; margin-top: -5px; border-spacing: 0 3px;" class="sturdy">
+        <?php
+        
+            echo '<tr>
+                    <td width=40px>Hari / Tgl</td>
+                    <td width=300px>: '.$hari.' / '.$tanggal.'</td>
+                </tr>
+                <tr>
+                    <td width=40px>Divisi</td>
+                    <td width=300px>: '.$nama_divisi.'</td>
+                </tr>';
+        
+        ?>
+        </table>
+
+        <table style="margin-top: 0px; border-spacing: 0 3px;" id="tabel">
+        <?php
+        
+            echo '<tr>
+                    <td width=6.25% rowspan="2">No</td>
+                    <td width=25% rowspan="2">Nama</td>
+                    <td width=25% colspan="2">Jam</td>
+                    <td width=31.25% rowspan="2">Uraian Kerja</td>
+                    <td width=12.5% rowspan="2">TTD</td>
+                </tr>
+                <tr>
+                    <td width=12.5%>Mulai</td>
+                    <td width=12.5%>Berakhir</td>
+                </tr>';
+        
+        ?>
+        </table>
+
+        <table style="margin-top: 7px; border-spacing: 0 3px; table-layout: fixed;" id="tabel">
+        <?php
+        
+            echo '  <tr>
+                        <td width=6.25% >1</td
+                        <td width=25% style="text-align: left; padding-left: 10px;">'.$nama_karyawan.'</td>
+                        <td width=12.5%>'.$jam_mulai.'</td>
+                        <td width=12.5%>'.$jam_akhir.'</td>
+                        <td width=31.25%>'.$uraian_kerja.'</td>
+                        <td width=12.5%></td>
+                    </tr>
+                    <tr>
+                        <td width=6.25% height="19px"></td
+                        <td width=25%></td>
+                        <td width=12.5%></td>
+                        <td width=12.5%></td>
+                        <td width=31.25%></td>
+                        <td width=12.5%></td>
+                    </tr>
+                    <tr>
+                        <td width=6.25% height="19px"></td
+                        <td width=25%></td>
+                        <td width=12.5%></td>
+                        <td width=12.5%></td>
+                        <td width=31.25%></td>
+                        <td width=12.5%></td>
+                    </tr>
+                    <tr>
+                        <td width=6.25% height="19px"></td
+                        <td width=25%></td>
+                        <td width=12.5%></td>
+                        <td width=12.5%></td>
+                        <td width=31.25%></td>
+                        <td width=12.5%></td>
+                    </tr>
+                    <tr>
+                        <td width=6.25% height="19px"></td
+                        <td width=25%></td>
+                        <td width=12.5%></td>
+                        <td width=12.5%></td>
+                        <td width=31.25%></td>
+                        <td width=12.5%></td>
+                    </tr>
+                    <tr>
+                        <td width=6.25% height="19px"></td
+                        <td width=25%></td>
+                        <td width=12.5%></td>
+                        <td width=12.5%></td>
+                        <td width=31.25%></td>
+                        <td width=12.5%></td>
+                    </tr>
+                    <tr>
+                        <td width=6.25% height="19px"></td
+                        <td width=25%></td>
+                        <td width=12.5%></td>
+                        <td width=12.5%></td>
+                        <td width=31.25%></td>
+                        <td width=12.5%></td>
+                    </tr>
+                    <tr>
+                        <td width=6.25% height="19px"></td
+                        <td width=25%></td>
+                        <td width=12.5%></td>
+                        <td width=12.5%></td>
+                        <td width=31.25%></td>
+                        <td width=12.5%></td>
+                    </tr>
+                    <tr>
+                        <td width=6.25% height="19px"></td
+                        <td width=25%></td>
+                        <td width=12.5%></td>
+                        <td width=12.5%></td>
+                        <td width=31.25%></td>
+                        <td width=12.5%></td>
+                    </tr>
+                    <tr>
+                        <td width=6.25% height="19px"></td
+                        <td width=25%></td>
+                        <td width=12.5%></td>
+                        <td width=12.5%></td>
+                        <td width=31.25%></td>
+                        <td width=12.5%></td>
+                    </tr>
+                    <tr>
+                        <td width=6.25% height="19px"></td
+                        <td width=25%></td>
+                        <td width=12.5%></td>
+                        <td width=12.5%></td>
+                        <td width=31.25%></td>
+                        <td width=12.5%></td>
+                    </tr>';
+        
+        ?>
+        </table>
+
+        <p class="p5" style="padding-top: 10px;">Krian, <?php echo $tanggal_buat; ?></p>
+
+        <table style="width:100%; margin-top: -20px; border-spacing: 0 10px;" class="sturdy">
+            <?php
+            
+            echo '<tr>
+                    <td width=33%; style="text-align:center; vertical-align:middle"></td>
+                    <td width=33%; style="text-align:center; vertical-align:middle">Menyetujui</td>
+                    <td width=33%; style="text-align:center; vertical-align:middle">Mengetahui</td>
+                </tr>
+                <tr>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                </tr>
+                <tr>
+                    <td width=33%; style="text-align:center; vertical-align:middle;"><div class="line"></div></td>
+                    <td width=33%; style="text-align:center; vertical-align:middle"><div class="line"></div></td>
+                    <td width=33%; style="text-align:center; vertical-align:middle"><div class="line"></div></td>
+                </tr>
+                <tr>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                </tr>
+                <tr>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                </tr>
+                <tr>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">Kabag.</td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">Direktur Operasional</td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">HRD</td>
+                </tr>
+                <tr>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;"></td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;"></td>
+                    <td width=33%; style="text-align:right; vertical-align:middle; padding-top: 5px; padding-right: 40px;">Form / HRD / 013 Rev.01</td>
+                </tr>';
+            
+            ?>
+        </table> 
+
+
+        <!-- <table style="width:100%; margin-top: 25px; border-spacing: 0 10px;" class="sturdy">
+            <?php
+            /*
+            echo '<tr>
+                    <td width=110px>Nama</td>
+                    <td width=180px>: '.$nama_karyawan.'</td>
+                    <td width=250px>Jabatan/Bagian : '.$nama_jabatan.' / '.$nama_divisi.'</td>
+                </tr>
+                <tr>
+                    <td width=110px>Hari / Tanggal</td>
+                    <td width=180px>: '.$hari.' / '.$tanggal.'</td>
+                    <td width=250px></td>
+                </tr>
+                <tr>
+                    <td width=110px>Jam Datang / Keluar</td>
+                    <td width=180px>: '.$jam_datang_keluar_ijin.'</td>
+                    <td width=250px></td>
+                </tr>
+                <tr>
+                    <td width=110px>Alasan</td>
+                    <td width=180px>: '.$alasan_ijin.'</td>
+                    <td width=250px></td>
+                </tr>';
+                */
+            ?>
+        </table>
+
+        <table style="width:100%; margin-top: 0px; border-spacing: 0 10px;" class="sturdy">
+            <?php
+            /*
+            echo '<tr>
+                    <td width=33%; style="text-align:center; vertical-align:middle">Mengetahui,</td>
+                    <td width=33%; style="text-align:center; vertical-align:middle">Menyetujui,</td>
+                    <td width=33%; style="text-align:center; vertical-align:middle">Pemohon,</td>
+                </tr>
+                <tr>
+                    <td width=33%; style="text-align:center; vertical-align:middle;"><div class="line"></div></td>
+                    <td width=33%; style="text-align:center; vertical-align:middle"><div class="line"></div></td>
+                    <td width=33%; style="text-align:center; vertical-align:middle"><div class="line"></div></td>
+                </tr>
+                <tr>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                </tr>
+                <tr>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                </tr>
+                <tr>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;"></td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;"></td>
+                    <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">Form/HRD/018-Rev.01</td>
+                </tr>';
+                */
+            ?>
+        </table> -->
+    </div>
+    
+    <style>
+        .p1 {
+            /* font-family: "Times New Roman", Times, serif; */
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+            font-size: 16px;
+            margin-top: -20px;
+        }
+
+        .p2 {
+            font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif; 
+            font-size: 13px;
+            margin-top: 0px;
+        }
+
+        .p3 {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 18px;
+            margin-top: -10px;
+        }
+
+        .p4 {
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+            font-size: 14px;
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .p5 {
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+            font-size: 14px;
+            text-align: left;
+        }
+
+        #tabel {
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+            border-collapse: collapse;
+            font-size: 14px;
+            text-align: center;
+            vertical-align: middle;
+            width: 100%;
+        }
+
+        #tabel td, #tabel th {
+            border: 1px solid #000;
+            padding: 2px;
+        }
+
+        .sturdy {
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+            font-size: 14px;
+        }
+
+        .line {
+            border-top: 1px solid black;
+            width: 120px;
+            margin-left: 55px;
+            margin-top: 30px;
+        }
+
+        .container {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+        
+
+        
+    </style>
+</body></html>

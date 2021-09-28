@@ -1,0 +1,17 @@
+DELIMITER $$
+CREATE OR REPLACE FUNCTION getHari(tgl VARCHAR(20)) RETURNS VARCHAR(20)
+BEGIN
+  	DECLARE hari VARCHAR(20) DEFAULT '';
+
+	SELECT IF(EXISTS( SELECT a.*
+                  FROM master_kalender a
+                  WHERE STR_TO_DATE(tgl, '%Y-%m-%d') BETWEEN a.tanggal_mulai AND a.tanggal_akhir AND
+                        a.status_kalender = 'Y'), 
+          		( SELECT a.jenis_hari
+                  FROM master_kalender a
+                  WHERE STR_TO_DATE(tgl, '%Y-%m-%d') BETWEEN a.tanggal_mulai AND a.tanggal_akhir AND
+                        a.status_kalender = 'Y'), 'N') into hari;
+  	RETURN hari;
+END$$
+DELIMITER ;
+

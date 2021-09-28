@@ -1,0 +1,13 @@
+DELIMITER $$
+CREATE OR REPLACE FUNCTION getGajiPokok(tahun int, plant VARCHAR(25)) RETURNS INT
+BEGIN
+  	DECLARE gp int DEFAULT 0;
+
+    SELECT master_umk.total_umk into gp
+    FROM master_umk
+    WHERE master_umk.tahun_umk = tahun AND
+          master_umk.status_umk = 'Y' AND
+          master_umk.plant = plant;
+  RETURN gp;
+END$$
+DELIMITER ;

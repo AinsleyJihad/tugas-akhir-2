@@ -1,0 +1,42 @@
+DELIMITER $$
+CREATE OR REPLACE FUNCTION getPotongAbsen(id VARCHAR(15), tahun INT, bulan INT) RETURNS INT
+BEGIN
+  	DECLARE potong INT DEFAULT 0;
+
+	SELECT COUNT(a.id_karyawan) as potong_absen into potong
+                    from master_jd_kerja_kyw as a,
+                        master_karyawan as b,
+                        master_jam_kerja c,
+                        master_divisi d
+                    WHERE a.status = 'Y' AND
+                        b.id_karyawan = a.id_karyawan AND
+                        c.id_jam_kerja = a.id_jam_kerja AND
+                        d.id_divisi = b.id_divisi AND
+                        IF(id = '0', a.id_karyawan = a.id_karyawan, a.id_karyawan = id) AND
+                        IF('0' = '0', d.id_divisi = d.id_divisi, d.id_divisi = '10') AND
+                        IF(b.k_tk = 'Kontrak', 
+                           IF(bulan = '1', 
+                              a.tanggal_jadwal BETWEEN STR_TO_DATE(CONCAT(tahun-1, '-', '12', '-18'), '%Y-%m-%d')AND STR_TO_DATE(CONCAT(tahun, '-', bulan, '-17'), '%Y-%m-%d'),
+                              a.tanggal_jadwal BETWEEN STR_TO_DATE(CONCAT(tahun, '-', bulan-1, '-18'), '%Y-%m-%d') AND STR_TO_DATE(CONCAT(tahun, '-', bulan, '-17'), '%Y-%m-%d')),
+                           IF(bulan = '1', 
+                              a.tanggal_jadwal BETWEEN STR_TO_DATE(CONCAT(tahun-1, '-', '12', '-26'), '%Y-%m-%d') AND STR_TO_DATE(CONCAT(tahun, '-', bulan, '-25'), '%Y-%m-%d'),
+                              a.tanggal_jadwal BETWEEN STR_TO_DATE(CONCAT(tahun, '-', bulan-1, '-25'), '%Y-%m-%d') AND STR_TO_DATE(CONCAT(tahun, '-', bulan, '-25'), '%Y-%m-%d'))) AND
+                           IF(getHari(a.tanggal_jadwal) = 'N',
+                            IF(DAYNAME(a.tanggal_jadwal) = 'Saturday',
+                               IF(getStatusCuti(a.id_karyawan, a.tanggal_jadwal, tahun, bulan) = 'N',
+                                 IF(getIdSuratIzin(a.id_karyawan, a.tanggal_jadwal, tahun, bulan) = 'N',
+                                  IF(getJamMasuk(a.id_karyawan, a.tanggal_jadwal, tahun, bulan) <> getJamPulang(a.id_karyawan, a.tanggal_jadwal, tahun, bulan),
+                                     IF(getIdSuratIzin(a.id_karyawan, a.tanggal_jadwal, tahun, bulan) = 'N',
+                                        IF(TIMEDIFF (getJamMasuk(a.id_karyawan, a.tanggal_jadwal, tahun, bulan), c.jam_masuk_sabtu) >= '0:10:0', 2=1, 
+                                           IF(TIMEDIFF (getJamPulang(a.id_karyawan, a.tanggal_jadwal, tahun, bulan), c.jam_pulang_sabtu) >= '0:0:0', 2=1, 2=1)),
+                                        2=1), 1=1), 2=1), 2=1),
+                               IF(getStatusCuti(a.id_karyawan, a.tanggal_jadwal, tahun, bulan) = 'N',
+                                 IF(getIdSuratIzin(a.id_karyawan, a.tanggal_jadwal, tahun, bulan) = 'N',
+                                  IF(getJamMasuk(a.id_karyawan, a.tanggal_jadwal, tahun, bulan) <> getJamPulang(a.id_karyawan, a.tanggal_jadwal, tahun, bulan),
+                                     IF(getIdSuratIzin(a.id_karyawan, a.tanggal_jadwal, tahun, bulan) = 'N',
+                                        IF(TIMEDIFF (getJamMasuk(a.id_karyawan,a.tanggal_jadwal, tahun, bulan), c.jam_masuk) >= '0:10:0', 2=1,
+                                           IF(TIMEDIFF (getJamPulang(a.id_karyawan, a.tanggal_jadwal, tahun, bulan), c.jam_pulang) >= '0:0:0', 2=1, 2=1)),
+                                        2=1), 1=1), 2=1), 2=1)), 2=1);
+  	RETURN potong;
+END$$
+DELIMITER ;

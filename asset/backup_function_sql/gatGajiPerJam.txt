@@ -1,0 +1,13 @@
+DELIMITER $$
+CREATE OR REPLACE FUNCTION getGajiPerJam(tahun int, plant_k VARCHAR(25)) RETURNS int
+BEGIN
+  	DECLARE gpj int DEFAULT 0;
+
+    SELECT master_umk.gaji_per_jam into gpj
+    FROM master_umk
+    WHERE master_umk.tahun_umk = tahun AND
+          master_umk.status_umk = 'Y' AND
+          master_umk.plant = plant_k;
+  	RETURN gpj;
+END$$
+DELIMITER ;

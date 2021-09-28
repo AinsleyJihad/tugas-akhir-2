@@ -1,0 +1,23 @@
+DELIMITER $$
+CREATE OR REPLACE FUNCTION getOngkosLain(id VARCHAR(15), tahun int, bulan int) RETURNS VARCHAR (20)
+BEGIN
+  	DECLARE ol VARCHAR(20) DEFAULT '';
+
+    SELECT IFNULL((SELECT IF(EXISTS(
+                    SELECT transaksi_penggajian.ongkos_lain_lain as hasil
+                    FROM transaksi_penggajian
+                    WHERE transaksi_penggajian.id_karyawan = id AND 
+                          transaksi_penggajian.tahun_gaji = tahun AND 
+           				  transaksi_penggajian.bulan_gaji = bulan AND 
+                          transaksi_penggajian.status_gaji = 'Y'
+                   ),
+                     (SELECT transaksi_penggajian.ongkos_lain_lain as hasil
+                      FROM transaksi_penggajian
+                      WHERE transaksi_penggajian.id_karyawan = id AND 
+                            transaksi_penggajian.tahun_gaji = tahun AND 
+           				    transaksi_penggajian.bulan_gaji = bulan AND 
+                            transaksi_penggajian.status_gaji = 'Y'),
+                      'N')), 'N') into ol;
+  	RETURN ol;
+END$$
+DELIMITER ;

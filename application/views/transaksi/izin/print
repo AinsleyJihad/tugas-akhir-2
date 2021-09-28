@@ -1,0 +1,186 @@
+<?php
+$view_id = '';
+$id_karyawan = '';
+$tanggal_ijin = '';
+$nama_karyawan = '';
+$nama_jabatan = '';
+$nama_divisi = '';
+$tanggal = '';
+$hari = '';
+$jam_datang_keluar_ijin = '';
+$alasan_ijin = '';
+$pilih_jam = '';
+$no_iso = '';
+foreach($surat_ijin as $s)
+{
+    if($s['id_surat_ijin'] == $id)
+    {
+        $view_id = $s['view_id'];
+        $id_karyawan = $s['id_karyawan'];
+        $nama_karyawan = $s['nama_karyawan'];
+        $nama_jabatan = $s['nama_jabatan'];
+        $nama_divisi = $s['nama_divisi'];
+        $tanggal = $s['tanggal_ijin'];
+        $jam_datang_keluar_ijin = $s['jam_datang_keluar_ijin'];
+        $alasan_ijin = $s['alasan_ijin'];
+        $pilih_jam = $s['pilih_jam'];
+        $no_iso = $s['no_iso'];
+    }
+}
+//echo $pilih_jam;
+
+
+
+$tanggal = substr($tanggal,8, 2)."-".substr($tanggal,5, 2)."-".substr($tanggal,0, 4);
+
+// $timestamp = strtotime('2020-12-28');
+$timestamp = strtotime($tanggal);
+
+$hari = date('D', $timestamp);
+
+if($hari == 'Sun')
+    $hari = 'Minggu';
+else if($hari == 'Sat')
+    $hari = 'Sabtu';
+else if($hari == 'Fri')
+    $hari = 'Jumat';
+else if($hari == 'Thu')
+    $hari = 'Kamis';
+else if($hari == 'Wed')
+    $hari = 'Rabu';
+else if($hari == 'Tue')
+    $hari = 'Selasa';
+else if($hari == 'Mon')
+    $hari = 'Senin';
+
+$jam_datang_keluar_ijin = substr($jam_datang_keluar_ijin ,0 , 5);
+?>
+
+<!doctype html>
+<html><head>
+    <title>Surat Izin <?php echo $view_id; ?></title>
+  </head><body>
+    <p class="p1"><b>PT. Jayamas Medica Industri</b></p>
+    <p class="p2">Jl. Raya By Pass KM 28, Krian - Sidoarjo</p>
+    <center>
+        <p class="p3"><b><u>SURAT IJIN TERLAMBAT DATANG / IJIN KELUAR</u></b></p>
+    </center>
+
+    <table style="width:100%; margin-top: 25px; border-spacing: 0 10px;" class="sturdy">
+        <?php
+        echo '<tr>
+                <td width=110px>Nama</td>
+                <td width=180px>: '.$nama_karyawan.'</td>
+                <td width=250px>Jabatan/Bagian : '.$nama_jabatan.' / '.$nama_divisi.'</td>
+              </tr>
+              <tr>
+                <td width=110px>Hari / Tanggal</td>
+                <td width=180px>: '.$hari.' / '.$tanggal.'</td>
+                <td width=250px></td>
+              </tr>
+              <tr>';
+              
+        
+        if($pilih_jam == "Jam Datang")
+        {
+            echo '<td width=110px>Jam Datang / <s>Keluar</s></td>';
+        }
+        else
+        {
+            echo '<td width=110px><s>Jam Datang</s> / Keluar</td>';
+        }
+        
+
+
+        echo    '<td width=180px>: '.$jam_datang_keluar_ijin.'</td>
+                <td width=250px></td>
+              </tr>';
+              
+        echo '<tr>
+                <td width=110px>Alasan</td>
+                <td width=180px>: '.$alasan_ijin.'</td>
+                <td width=250px></td>
+              </tr>';
+        ?>
+    </table>
+
+    <table style="width:100%; margin-top: 0px; border-spacing: 0 10px;" class="sturdy">
+        <?php
+        echo '<tr>
+                <td width=33%; style="text-align:center; vertical-align:middle">Mengetahui,</td>
+                <td width=33%; style="text-align:center; vertical-align:middle">Menyetujui,</td>
+                <td width=33%; style="text-align:center; vertical-align:middle">Pemohon,</td>
+              </tr>
+              <tr>
+                <td width=33%; style="text-align:center; vertical-align:middle;"><div class="line"></div></td>
+                <td width=33%; style="text-align:center; vertical-align:middle"><div class="line"></div></td>
+                <td width=33%; style="text-align:center; vertical-align:middle"><div class="line"></div></td>
+              </tr>
+              <tr>
+                <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+              </tr>
+              <tr>
+                <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+                <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">  </td>
+              </tr>
+              <tr>
+                <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;"></td>
+                <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;"></td>
+                <td width=33%; style="text-align:center; vertical-align:middle; margin-top: 30px;">'.$no_iso.'</td>
+              </tr>';
+        ?>
+    </table>
+    
+    <style>
+        .p1 {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 14px;
+            margin-top: -20px;
+        }
+
+        .p2 {
+            font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif; 
+            font-size: 11px;
+            margin-top: 0;
+        }
+
+        .p3 {
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+            font-size: 14px;
+            margin-top: 15px;
+        }
+
+        .sturdy {
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+            font-size: 11px;
+        }
+
+        .line {
+            border-top: 1px solid black;
+            width: 90px;
+            margin-left: 30px;
+            margin-top: 30px;
+        }
+
+        .strikeout {
+            font-size: 4em;
+            line-height: 1em;
+            position: relative;
+        }
+        .strikeout::after {
+            border-bottom: 0.125em solid black;
+            content: "";
+            left: 0;
+            margin-top: calc(0.125em / 2 * -1);
+            position: absolute;
+            right: 0;
+            top: 50%;
+        }
+        
+
+        
+    </style>
+</body></html>

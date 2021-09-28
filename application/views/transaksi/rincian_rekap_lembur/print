@@ -1,0 +1,901 @@
+<?php 
+
+// echo "id_karyawan : ".$id."<br>";
+// echo "tahun : ".$tahun."<br>";
+// echo "bulan : ".$bulan."<br>";
+// print_r($lembur);
+
+$nama = "";
+$divisi = "";
+$bulan_nama = "";
+$gaji_per_jam = "";
+foreach($karyawan as $k)
+{
+    if($k['id_karyawan'] == $id)
+    {
+        $nama = $k['nama_karyawan'];
+        $divisi = $k['nama_divisi'];
+    }
+}
+
+foreach($umk as $k)
+{
+    if($k['tahun_umk'] == $tahun)
+    {
+        $gaji_per_jam = $k['gaji_per_jam'];
+    }
+}
+
+if($bulan == '1')
+    $bulan_nama = 'Januari';
+else if($bulan == '2')
+    $bulan_nama = 'Februari';
+else if($bulan == '3')
+    $bulan_nama = 'Maret';
+else if($bulan == '4')
+    $bulan_nama = 'April';
+else if($bulan == '5')
+    $bulan_nama = 'Mei';
+else if($bulan == '6')
+    $bulan_nama = 'Juni';
+else if($bulan == '7')
+    $bulan_nama = 'Juli';
+else if($bulan == '8')
+    $bulan_nama = 'Agustus';
+else if($bulan == '9')
+    $bulan_nama = 'September';
+else if($bulan == '10')
+    $bulan_nama = 'Oktober';
+else if($bulan == '11')
+    $bulan_nama = 'Nopember';
+else if($bulan == '12')
+    $bulan_nama = 'Desember';
+
+
+
+$total_jam_lembur = 0;
+$u_makan = 0;
+$jumlah = 0;
+
+foreach($lembur as $l)
+{
+    
+    $total_jam_lembur = $total_jam_lembur + $l['ambil_jam'];
+    if($l['ambil_jam'] >= 3)
+    {
+        $u_makan = $u_makan + 5000;
+    }
+    $jumlah++;
+    
+}
+
+// echo "<center>".$jumlah."</center><br>";
+
+?>
+
+<!doctype html>
+<html><head>
+    <title>Surat Perintah Lembur <?php echo $view_id; ?></title>
+</head><body>
+    <?php
+    if($jumlah <= 12)
+    { ?>  
+    <!-- JIKA 1 Lembar -->
+        <div class="container">
+            <p class="p1"><b>PT. JAYAMAS MEDICA INDUSTRI</b></p>
+            <!-- <p class="p2">Jl. Raya By Pass KM 28, Krian - Sidoarjo</p> -->
+            <center>
+                <p class="p3"><b>PERINCIAN REKAP LEMBUR</b></p>
+            </center>
+
+            <!-- <p class="p4">Krian, <?php //echo $tanggal_cuti; ?></p> -->
+
+            
+            <table style="width:100%; margin-top: 15px; border-spacing: 0 3px;" class="sturdy">
+            <?php
+            
+                echo '<tr>
+                        <td width=50%>NAMA : '.$nama.'</td>
+                        <td width=10%>BULAN</td>
+                        <td width=40%>: '.$bulan_nama.'</td>
+                    </tr>
+                    <tr>
+                        <td width=50%>Rp. '.number_format($gaji_per_jam,0,',','.').'/jam</td>
+                        <td width=10%>DIVISI</td>
+                        <td width=40%>: '.$divisi.'</td>
+                    </tr>';
+            
+            ?>
+            </table>
+
+            <table style="margin-top: 5px; border-spacing: 0 3px;" id="tabel">
+            <?php
+            
+                echo '<tr>
+                        <td width=5%>No</td>
+                        <td width=15%>Tanggal</td>
+                        <td width=20% colspan="2">Jam ... s/d Jam ...</td>
+                        <td width=10%>Total<br>Jam</td>
+                        <td width=35%>Keterangan (Mengerjakan)</td>
+                        <td width=15%>Paraf / Acc</td>
+                    </tr>';
+
+                $seq = 1;
+
+                foreach($lembur as $l)
+                {
+                    // $tanggal_bulan = substr($l['tanggal_lembur'], 5, 2);
+                    // $tanggal_tahun = substr($l['tanggal_lembur'], 0, 4);
+                    // echo "tanggal_bulan : ".(int)$tanggal_bulan."<br>";
+                    // echo "tanggal_tahun : ".$tanggal_tahun."<br>";
+                    // echo "id_karyawan : ".$l['id_karyawan']."<br>";
+                    // echo "bulan : ".$bulan."<br>";
+                    // echo "tahun : ".$tahun."<br>";
+                    // echo "id : ".$id."<br><br>";
+
+                    $tgl = substr($l['tanggal_lembur'],8, 2)."-".substr($l['tanggal_lembur'],5, 2)."-".substr($l['tanggal_lembur'],0, 4);
+
+                    echo 
+                    '<tr>
+                        <td width=5%>'.$seq.'</td>
+                        <td width=15%>'.$tgl.'</td>
+                        <td width=10%>'.substr($l['jam_mulai'], 0, 5).'</td>
+                        <td width=10%>'.substr($l['jam_akhir'], 0, 5).'</td>
+                        <td width=10%>'.$l['ambil_jam'].'</td>
+                        <td width=35%>'.$l['uraian_kerja'].'</td>
+                        <td width=15%></td>
+                    </tr>';
+                    $seq++;
+                    
+                }
+
+                for($i = $seq; $i <= 12; $i++)
+                {
+                    echo 
+                    '<tr>
+                        <td width=5%>'.$i.'</td>
+                        <td width=15%></td>
+                        <td width=10%></td>
+                        <td width=10%></td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                }
+
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000;">Total jam</td>
+                        <td width=10%>'.$total_jam_lembur.' Jam</td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000"">U/ Makan</td>
+                        <td width=10%>Rp. '.number_format($u_makan,0,',','.').'</td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000"">Total Lembur & U / Makan</td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=95% colspan="6" style="text-align: right; border: 0px solid #000""><i>Form / HRD / 014-rev00</i></td>
+                    </tr>';
+                
+            
+            ?>
+            </table>
+        </div>
+    <?php
+    }
+    else if($jumlah <= 24)
+    { ?>
+    <!-- JIKA 2 LEMBAR -->
+        <div class="container">
+            <p class="p1"><b>PT. JAYAMAS MEDICA INDUSTRI</b></p>
+            <!-- <p class="p2">Jl. Raya By Pass KM 28, Krian - Sidoarjo</p> -->
+            <center>
+                <p class="p3"><b>PERINCIAN REKAP LEMBUR</b></p>
+            </center>
+
+            <!-- <p class="p4">Krian, <?php //echo $tanggal_cuti; ?></p> -->
+
+            
+            <table style="width:100%; margin-top: 15px; border-spacing: 0 3px;" class="sturdy">
+            <?php
+            
+                echo '<tr>
+                        <td width=50%>NAMA : '.$nama.'</td>
+                        <td width=10%>BULAN</td>
+                        <td width=40%>: '.$bulan_nama.'</td>
+                    </tr>
+                    <tr>
+                        <td width=50%>Rp. '.number_format($gaji_per_jam,0,',','.').'/jam</td>
+                        <td width=10%>DIVISI</td>
+                        <td width=40%>: '.$divisi.'</td>
+                    </tr>';
+            
+            ?>
+            </table>
+
+            <table style="margin-top: 5px; border-spacing: 0 3px;" id="tabel">
+            <?php
+            
+                echo '<tr>
+                        <td width=5%>No</td>
+                        <td width=15%>Tanggal</td>
+                        <td width=20% colspan="2">Jam ... s/d Jam ...</td>
+                        <td width=10%>Total<br>Jam</td>
+                        <td width=35%>Keterangan (Mengerjakan)</td>
+                        <td width=15%>Paraf / Acc</td>
+                    </tr>';
+
+                $seq = 1;
+                $hitung = 1;
+                foreach($lembur as $l)
+                {
+                    // $tanggal_bulan = substr($l['tanggal_lembur'], 5, 2);
+                    // $tanggal_tahun = substr($l['tanggal_lembur'], 0, 4);
+                    // echo "tanggal_bulan : ".(int)$tanggal_bulan."<br>";
+                    // echo "tanggal_tahun : ".$tanggal_tahun."<br>";
+                    // echo "id_karyawan : ".$l['id_karyawan']."<br>";
+                    // echo "bulan : ".$bulan."<br>";
+                    // echo "tahun : ".$tahun."<br>";
+                    // echo "id : ".$id."<br><br>";
+
+                    $tgl = substr($l['tanggal_lembur'],8, 2)."-".substr($l['tanggal_lembur'],5, 2)."-".substr($l['tanggal_lembur'],0, 4);
+
+                    if($hitung >= 1 && $hitung <= 12)
+                    {
+                        echo 
+                        '<tr>
+                            <td width=5%>'.$seq.'</td>
+                            <td width=15%>'.$tgl.'</td>
+                            <td width=10%>'.substr($l['jam_mulai'], 0, 5).'</td>
+                            <td width=10%>'.substr($l['jam_akhir'], 0, 5).'</td>
+                            <td width=10%>'.$l['ambil_jam'].'</td>
+                            <td width=35%>'.$l['uraian_kerja'].'</td>
+                            <td width=15%></td>
+                        </tr>';
+                        $seq++;
+                    }
+                    $hitung++;
+                    
+                }
+
+                for($i = $seq; $i <= 12; $i++)
+                {
+                    echo 
+                    '<tr>
+                        <td width=5%>'.$i.'</td>
+                        <td width=15%></td>
+                        <td width=10%></td>
+                        <td width=10%></td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                }
+
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000;">Total jam</td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000"">U/ Makan</td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000"">Total Lembur & U / Makan</td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=95% colspan="6" style="text-align: right; border: 0px solid #000""><i>Form / HRD / 014-rev00</i></td>
+                    </tr>';
+                
+            
+            ?>
+            </table>
+        </div>
+
+        <!-- GANTI HALAMAN -->
+        <div class="page_break"></div> 
+        <!-- /GANTI HALAMAN -->
+
+        <div class="container">
+            <p class="p1"><b>PT. JAYAMAS MEDICA INDUSTRI</b></p>
+            <!-- <p class="p2">Jl. Raya By Pass KM 28, Krian - Sidoarjo</p> -->
+            <center>
+                <p class="p3"><b>PERINCIAN REKAP LEMBUR</b></p>
+            </center>
+
+            <!-- <p class="p4">Krian, <?php //echo $tanggal_cuti; ?></p> -->
+
+            
+            <table style="width:100%; margin-top: 15px; border-spacing: 0 3px;" class="sturdy">
+            <?php
+            
+                echo '<tr>
+                        <td width=50%>NAMA : '.$nama.'</td>
+                        <td width=10%>BULAN</td>
+                        <td width=40%>: '.$bulan_nama.'</td>
+                    </tr>
+                    <tr>
+                        <td width=50%>Rp. '.number_format($gaji_per_jam,0,',','.').'/jam</td>
+                        <td width=10%>DIVISI</td>
+                        <td width=40%>: '.$divisi.'</td>
+                    </tr>';
+            
+            ?>
+            </table>
+
+            <table style="margin-top: 5px; border-spacing: 0 3px;" id="tabel">
+            <?php
+            
+                echo '<tr>
+                        <td width=5%>No</td>
+                        <td width=15%>Tanggal</td>
+                        <td width=20% colspan="2">Jam ... s/d Jam ...</td>
+                        <td width=10%>Total<br>Jam</td>
+                        <td width=35%>Keterangan (Mengerjakan)</td>
+                        <td width=15%>Paraf / Acc</td>
+                    </tr>';
+
+                $seq = 1;
+                $hitung = 1;
+                foreach($lembur as $l)
+                {
+                    // $tanggal_bulan = substr($l['tanggal_lembur'], 5, 2);
+                    // $tanggal_tahun = substr($l['tanggal_lembur'], 0, 4);
+                    // echo "tanggal_bulan : ".(int)$tanggal_bulan."<br>";
+                    // echo "tanggal_tahun : ".$tanggal_tahun."<br>";
+                    // echo "id_karyawan : ".$l['id_karyawan']."<br>";
+                    // echo "bulan : ".$bulan."<br>";
+                    // echo "tahun : ".$tahun."<br>";
+                    // echo "id : ".$id."<br><br>";
+
+                    $tgl = substr($l['tanggal_lembur'],8, 2)."-".substr($l['tanggal_lembur'],5, 2)."-".substr($l['tanggal_lembur'],0, 4);
+
+                    if($hitung >= 13 && $hitung <= 24)
+                    {
+                        echo 
+                        '<tr>
+                            <td width=5%>'.$seq.'</td>
+                            <td width=15%>'.$tgl.'</td>
+                            <td width=10%>'.substr($l['jam_mulai'], 0, 5).'</td>
+                            <td width=10%>'.substr($l['jam_akhir'], 0, 5).'</td>
+                            <td width=10%>'.$l['ambil_jam'].'</td>
+                            <td width=35%>'.$l['uraian_kerja'].'</td>
+                            <td width=15%></td>
+                        </tr>';
+                        $seq++;
+                    }
+                    $hitung++;
+                    
+                }
+
+                for($i = $seq; $i <= 12; $i++)
+                {
+                    echo 
+                    '<tr>
+                        <td width=5%>'.$i.'</td>
+                        <td width=15%></td>
+                        <td width=10%></td>
+                        <td width=10%></td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                }
+
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000;">Total jam</td>
+                        <td width=10%>'.$total_jam_lembur.' Jam</td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000"">U/ Makan</td>
+                        <td width=10%>Rp. '.number_format($u_makan,0,',','.').'</td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000"">Total Lembur & U / Makan</td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=95% colspan="6" style="text-align: right; border: 0px solid #000""><i>Form / HRD / 014-rev00</i></td>
+                    </tr>';
+                
+            
+            ?>
+            </table>
+        </div>
+    <?php
+    }
+    else
+    { ?>
+    
+        <!-- JIKA 2 LEMBAR -->
+        <div class="container">
+            <p class="p1"><b>PT. JAYAMAS MEDICA INDUSTRI</b></p>
+            <!-- <p class="p2">Jl. Raya By Pass KM 28, Krian - Sidoarjo</p> -->
+            <center>
+                <p class="p3"><b>PERINCIAN REKAP LEMBUR</b></p>
+            </center>
+
+            <!-- <p class="p4">Krian, <?php //echo $tanggal_cuti; ?></p> -->
+
+            
+            <table style="width:100%; margin-top: 15px; border-spacing: 0 3px;" class="sturdy">
+            <?php
+            
+                echo '<tr>
+                        <td width=50%>NAMA : '.$nama.'</td>
+                        <td width=10%>BULAN</td>
+                        <td width=40%>: '.$bulan_nama.'</td>
+                    </tr>
+                    <tr>
+                        <td width=50%>Rp. '.number_format($gaji_per_jam,0,',','.').'/jam</td>
+                        <td width=10%>DIVISI</td>
+                        <td width=40%>: '.$divisi.'</td>
+                    </tr>';
+            
+            ?>
+            </table>
+
+            <table style="margin-top: 5px; border-spacing: 0 3px;" id="tabel">
+            <?php
+            
+                echo '<tr>
+                        <td width=5%>No</td>
+                        <td width=15%>Tanggal</td>
+                        <td width=20% colspan="2">Jam ... s/d Jam ...</td>
+                        <td width=10%>Total<br>Jam</td>
+                        <td width=35%>Keterangan (Mengerjakan)</td>
+                        <td width=15%>Paraf / Acc</td>
+                    </tr>';
+
+                $seq = 1;
+                $hitung = 1;
+                foreach($lembur as $l)
+                {
+                    // $tanggal_bulan = substr($l['tanggal_lembur'], 5, 2);
+                    // $tanggal_tahun = substr($l['tanggal_lembur'], 0, 4);
+                    // echo "tanggal_bulan : ".(int)$tanggal_bulan."<br>";
+                    // echo "tanggal_tahun : ".$tanggal_tahun."<br>";
+                    // echo "id_karyawan : ".$l['id_karyawan']."<br>";
+                    // echo "bulan : ".$bulan."<br>";
+                    // echo "tahun : ".$tahun."<br>";
+                    // echo "id : ".$id."<br><br>";
+
+                    $tgl = substr($l['tanggal_lembur'],8, 2)."-".substr($l['tanggal_lembur'],5, 2)."-".substr($l['tanggal_lembur'],0, 4);
+
+                    if($hitung >= 1 && $hitung <= 12)
+                    {
+                        echo 
+                        '<tr>
+                            <td width=5%>'.$seq.'</td>
+                            <td width=15%>'.$tgl.'</td>
+                            <td width=10%>'.substr($l['jam_mulai'], 0, 5).'</td>
+                            <td width=10%>'.substr($l['jam_akhir'], 0, 5).'</td>
+                            <td width=10%>'.$l['ambil_jam'].'</td>
+                            <td width=35%>'.$l['uraian_kerja'].'</td>
+                            <td width=15%></td>
+                        </tr>';
+                        $seq++;
+                    }
+                    $hitung++;
+                    
+                }
+
+                for($i = $seq; $i <= 12; $i++)
+                {
+                    echo 
+                    '<tr>
+                        <td width=5%>'.$i.'</td>
+                        <td width=15%></td>
+                        <td width=10%></td>
+                        <td width=10%></td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                }
+
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000;">Total jam</td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000"">U/ Makan</td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000"">Total Lembur & U / Makan</td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=95% colspan="6" style="text-align: right; border: 0px solid #000""><i>Form / HRD / 014-rev00</i></td>
+                    </tr>';
+                
+            
+            ?>
+            </table>
+        </div>
+
+        <!-- GANTI HALAMAN 2 -->
+        <div class="page_break"></div> 
+        <!-- /GANTI HALAMAN 2 -->
+
+        <div class="container">
+            <p class="p1"><b>PT. JAYAMAS MEDICA INDUSTRI</b></p>
+            <!-- <p class="p2">Jl. Raya By Pass KM 28, Krian - Sidoarjo</p> -->
+            <center>
+                <p class="p3"><b>PERINCIAN REKAP LEMBUR</b></p>
+            </center>
+
+            <!-- <p class="p4">Krian, <?php //echo $tanggal_cuti; ?></p> -->
+
+            
+            <table style="width:100%; margin-top: 15px; border-spacing: 0 3px;" class="sturdy">
+            <?php
+            
+                echo '<tr>
+                        <td width=50%>NAMA : '.$nama.'</td>
+                        <td width=10%>BULAN</td>
+                        <td width=40%>: '.$bulan_nama.'</td>
+                    </tr>
+                    <tr>
+                        <td width=50%>Rp. '.number_format($gaji_per_jam,0,',','.').'/jam</td>
+                        <td width=10%>DIVISI</td>
+                        <td width=40%>: '.$divisi.'</td>
+                    </tr>';
+            
+            ?>
+            </table>
+
+            <table style="margin-top: 5px; border-spacing: 0 3px;" id="tabel">
+            <?php
+            
+                echo '<tr>
+                        <td width=5%>No</td>
+                        <td width=15%>Tanggal</td>
+                        <td width=20% colspan="2">Jam ... s/d Jam ...</td>
+                        <td width=10%>Total<br>Jam</td>
+                        <td width=35%>Keterangan (Mengerjakan)</td>
+                        <td width=15%>Paraf / Acc</td>
+                    </tr>';
+
+                $seq = 1;
+                $hitung = 1;
+                foreach($lembur as $l)
+                {
+                    // $tanggal_bulan = substr($l['tanggal_lembur'], 5, 2);
+                    // $tanggal_tahun = substr($l['tanggal_lembur'], 0, 4);
+                    // echo "tanggal_bulan : ".(int)$tanggal_bulan."<br>";
+                    // echo "tanggal_tahun : ".$tanggal_tahun."<br>";
+                    // echo "id_karyawan : ".$l['id_karyawan']."<br>";
+                    // echo "bulan : ".$bulan."<br>";
+                    // echo "tahun : ".$tahun."<br>";
+                    // echo "id : ".$id."<br><br>";
+
+                    $tgl = substr($l['tanggal_lembur'],8, 2)."-".substr($l['tanggal_lembur'],5, 2)."-".substr($l['tanggal_lembur'],0, 4);
+
+                    if($hitung >= 13 && $hitung <= 24)
+                    {
+                        echo 
+                        '<tr>
+                            <td width=5%>'.$seq.'</td>
+                            <td width=15%>'.$tgl.'</td>
+                            <td width=10%>'.substr($l['jam_mulai'], 0, 5).'</td>
+                            <td width=10%>'.substr($l['jam_akhir'], 0, 5).'</td>
+                            <td width=10%>'.$l['ambil_jam'].'</td>
+                            <td width=35%>'.$l['uraian_kerja'].'</td>
+                            <td width=15%></td>
+                        </tr>';
+                        $seq++;
+                    }
+                    $hitung++;
+                    
+                }
+
+                for($i = $seq; $i <= 12; $i++)
+                {
+                    echo 
+                    '<tr>
+                        <td width=5%>'.$i.'</td>
+                        <td width=15%></td>
+                        <td width=10%></td>
+                        <td width=10%></td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                }
+
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000;">Total jam</td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000"">U/ Makan</td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000"">Total Lembur & U / Makan</td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=95% colspan="6" style="text-align: right; border: 0px solid #000""><i>Form / HRD / 014-rev00</i></td>
+                    </tr>';
+                
+            
+            ?>
+            </table>
+        </div>
+
+        <!-- GANTI HALAMAN 3 -->
+        <div class="page_break"></div> 
+        <!-- /GANTI HALAMAN 3 -->
+
+        <div class="container">
+            <p class="p1"><b>PT. JAYAMAS MEDICA INDUSTRI</b></p>
+            <!-- <p class="p2">Jl. Raya By Pass KM 28, Krian - Sidoarjo</p> -->
+            <center>
+                <p class="p3"><b>PERINCIAN REKAP LEMBUR</b></p>
+            </center>
+
+            <!-- <p class="p4">Krian, <?php //echo $tanggal_cuti; ?></p> -->
+
+            
+            <table style="width:100%; margin-top: 15px; border-spacing: 0 3px;" class="sturdy">
+            <?php
+            
+                echo '<tr>
+                        <td width=50%>NAMA : '.$nama.'</td>
+                        <td width=10%>BULAN</td>
+                        <td width=40%>: '.$bulan_nama.'</td>
+                    </tr>
+                    <tr>
+                        <td width=50%>Rp. '.number_format($gaji_per_jam,0,',','.').'/jam</td>
+                        <td width=10%>DIVISI</td>
+                        <td width=40%>: '.$divisi.'</td>
+                    </tr>';
+            
+            ?>
+            </table>
+
+            <table style="margin-top: 5px; border-spacing: 0 3px;" id="tabel">
+            <?php
+            
+                echo '<tr>
+                        <td width=5%>No</td>
+                        <td width=15%>Tanggal</td>
+                        <td width=20% colspan="2">Jam ... s/d Jam ...</td>
+                        <td width=10%>Total<br>Jam</td>
+                        <td width=35%>Keterangan (Mengerjakan)</td>
+                        <td width=15%>Paraf / Acc</td>
+                    </tr>';
+
+                $seq = 1;
+                $hitung = 1;
+                foreach($lembur as $l)
+                {
+                    // $tanggal_bulan = substr($l['tanggal_lembur'], 5, 2);
+                    // $tanggal_tahun = substr($l['tanggal_lembur'], 0, 4);
+                    // echo "tanggal_bulan : ".(int)$tanggal_bulan."<br>";
+                    // echo "tanggal_tahun : ".$tanggal_tahun."<br>";
+                    // echo "id_karyawan : ".$l['id_karyawan']."<br>";
+                    // echo "bulan : ".$bulan."<br>";
+                    // echo "tahun : ".$tahun."<br>";
+                    // echo "id : ".$id."<br><br>";
+
+                    $tgl = substr($l['tanggal_lembur'],8, 2)."-".substr($l['tanggal_lembur'],5, 2)."-".substr($l['tanggal_lembur'],0, 4);
+
+                    if($hitung >= 25 && $hitung <= 36)
+                    {
+                        echo 
+                        '<tr>
+                            <td width=5%>'.$seq.'</td>
+                            <td width=15%>'.$tgl.'</td>
+                            <td width=10%>'.substr($l['jam_mulai'], 0, 5).'</td>
+                            <td width=10%>'.substr($l['jam_akhir'], 0, 5).'</td>
+                            <td width=10%>'.$l['ambil_jam'].'</td>
+                            <td width=35%>'.$l['uraian_kerja'].'</td>
+                            <td width=15%></td>
+                        </tr>';
+                        $seq++;
+                    }
+                    $hitung++;
+                    
+                }
+
+                for($i = $seq; $i <= 12; $i++)
+                {
+                    echo 
+                    '<tr>
+                        <td width=5%>'.$i.'</td>
+                        <td width=15%></td>
+                        <td width=10%></td>
+                        <td width=10%></td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                }
+
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000;">Total jam</td>
+                        <td width=10%>'.$total_jam_lembur.' Jam</td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000"">U/ Makan</td>
+                        <td width=10%>Rp. '.number_format($u_makan,0,',','.').'</td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=45% colspan="3" style="text-align: left; padding-left: 25%; border: 0px solid #000"">Total Lembur & U / Makan</td>
+                        <td width=10%></td>
+                        <td width=35%></td>
+                        <td width=15%></td>
+                    </tr>';
+                echo 
+                    '<tr>
+                        <td width=5% style="border: 0px solid #000""></td>
+                        <td width=95% colspan="6" style="text-align: right; border: 0px solid #000""><i>Form / HRD / 014-rev00</i></td>
+                    </tr>';
+                
+            
+            ?>
+            </table>
+        </div>
+
+    <?php
+    } ?>
+    
+    
+    <style>
+        .p1 {
+            font-family: "Times New Roman", Times, serif;
+            /* font-family: Arial,Helvetica Neue,Helvetica,sans-serif;  */
+            font-size: 16px;
+            margin-top: -20px;
+        }
+
+        .p2 {
+            font-family: Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif; 
+            font-size: 13px;
+            margin-top: 0px;
+        }
+
+        .p3 {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .p4 {
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+            font-size: 14px;
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .p5 {
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+            font-size: 14px;
+            text-align: left;
+        }
+
+        #tabel {
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif;
+            border-collapse: collapse;
+            font-size: 15px;
+            text-align: center;
+            vertical-align: middle;
+            width: 100%;
+        }
+
+        #tabel td, #tabel th {
+            border: 1px solid #000;
+            padding: 2px;
+        }
+
+        .sturdy {
+            font-family: Arial,Helvetica Neue,Helvetica,sans-serif; 
+            font-size: 14px;
+        }
+
+        .line {
+            border-top: 1px solid black;
+            width: 120px;
+            margin-left: 55px;
+            margin-top: 30px;
+        }
+
+        .container {
+            margin-top: 0px;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
+        }
+        
+        .page_break { page-break-before: always; }
+
+        
+    </style>
+</body></html>
